@@ -219,10 +219,227 @@ standardize_traits <- function(df) {
 
 cleaned <- standardize_traits(df_clean)
 
-df <- subset(cleaned, select = -trait_value)
+df <- subset(cleaned, select = -trait_value) 
 df <- subset(df, select = -trait)
 df <- subset(df, select = -unit)
 
 colnames(df) <- c("species","DatasetName","trait","trait_value")
 
-saveRDS(df,"L:/TraitDataUpdated.rds")
+library(dplyr)
+library(stringr)
+
+df <- df %>%
+  mutate(
+    trait_value = if_else(
+      str_detect(trait, "\\(mg/g\\)"),
+      trait_value / 10,
+      trait_value
+    ),
+    trait = if_else(
+      str_detect(trait, "\\(mg/g\\)"),
+      str_replace(trait, "\\(mg/g\\)", "(%)"),
+      trait
+    )
+  )
+
+df <- df %>%
+  mutate(
+    trait = case_when(
+      trait %in% c("Stem hydraulic conductivity kg s?1 MPa?1",
+                   "Stem hydraulic conductivity kg s-1 MPa-1") ~ "Stem hydraulic conductivity kg s-1 MPa-1",
+      TRUE ~ trait
+    )
+  )
+
+df <- df %>%
+  mutate(
+    trait = case_when(
+      trait %in% c("Branch hydraulic conductance kg/m/s/Mpa",
+                   "Branch hydraulic conductance kg.m-1.MPa-1.s-1") ~ "Branch hydraulic conductance kg.m-1.MPa-1.s-1",
+      TRUE ~ trait
+    )
+  )
+
+
+
+
+df <- df %>%
+  mutate(
+    trait = case_when(
+      trait %in% c("Branch hydraulic conductance [kg/(m s Mpa)]",
+                   "Branch hydraulic conductance kg.m-1.MPa-1.s-1") ~ "Branch hydraulic conductance kg.m-1.MPa-1.s-1",
+      TRUE ~ trait
+    )
+  )
+
+df <- df %>%
+  mutate(
+    trait = case_when(
+      trait %in% c("Leaf N content (%)",
+                   "N_leaf_Percent") ~ "Leaf N content (%)",
+      TRUE ~ trait
+    )
+  )
+
+
+df <- df %>%
+  mutate(
+    trait = case_when(
+      trait %in% c("Area_cm2",
+                   "Leaf area (cm2)") ~ "Leaf area (cm2)",
+      TRUE ~ trait
+    )
+  )
+
+
+df <- df %>%
+  mutate(
+    trait = case_when(
+      trait %in% c("P_leaf_Percent",
+                   "Leaf P content (%)") ~ "Leaf P content (%)",
+      TRUE ~ trait
+    )
+  )
+
+df <- df %>%
+  mutate(
+    trait = case_when(
+      trait %in% c("Leaf fresh mass (g)",
+                   "LeafFreshMass_g") ~ "Leaf fresh mass (g)",
+      TRUE ~ trait
+    )
+  )
+
+df <- df %>%
+  mutate(
+    trait = case_when(
+      trait %in% c("Leaf dry mass (g)",
+                   "LeafDryMass_g") ~ "Leaf dry mass (g)",
+      TRUE ~ trait
+    )
+  )
+
+df <- df %>%
+  mutate(
+    trait = case_when(
+      trait %in% c("C_leaf_Percent"
+                  ) ~ "Leaf C content (%)",
+      TRUE ~ trait
+    )
+  )
+
+
+
+
+
+
+
+
+df <- df %>%
+  filter(trait != "Flowering duration (months)")
+
+df <- df %>%
+  filter(trait != "Plant height (m)")
+
+df <- df %>%
+  filter(trait != "longest whole plant longevity years")
+
+df <- df %>%
+  filter(trait != "maximum whole plant longevity years")
+
+df <- df %>%
+  filter(trait != "Leaf length max (cm)")
+
+df <- df %>%
+  filter(trait != "Leaf length min (cm)")
+
+df <- df %>%
+  filter(trait != "Leaf width min (cm)")
+
+df <- df %>%
+  filter(trait != "inflorescence length cm")
+
+df <- df %>%
+  filter(trait != "diameter at breast height (1.3 m) cm")
+
+df <- df %>%
+  filter(trait != "whole plant primary juvenile period length years")
+
+df <- df %>%
+  filter(trait != "Leaf lamina fracture toughness J.m-2")
+
+df <- df %>%
+  filter(trait != "Leaf width max (cm)")
+
+df <- df %>%
+  filter(trait != "Root dry mass (g)")
+
+df <- df %>%
+  filter(trait != "Flowering start")
+
+df <- df %>%
+  filter(trait != "Fruit length (mm)")
+
+df <- df %>%
+  filter(trait != "Seed length (mm)")
+
+df <- df %>%
+  filter(trait != "Stem dry mass (kg)")
+
+df <- df %>%
+  filter(trait != "Vessel number (mm2)")
+
+
+df <- df %>%
+  mutate(
+    trait_value = ifelse(
+      trait == "Leaf thickness (mm)" & trait_value > 10,
+      trait_value / 1000,
+      trait_value
+    )
+  )
+
+
+df <- df %>%
+  mutate(
+    trait_value = ifelse(
+      trait == "Leaf P content (%))" & trait_value > 1,
+      trait_value / 10,  # likely mg/g → %
+      trait_value
+    )
+  ) %>%
+  filter(!(trait == "Leaf P content (%))" & trait_value > 1))
+
+
+df <- df %>%
+  filter(!(trait == "Leaf area (cm2)" & trait_value <= 0))
+
+df <- df %>%
+  filter(!(trait == "Seed mass (mg)" & trait_value > 100000))
+
+df <- df %>%
+  filter(!(trait == "Leaf N content (%)" & trait_value > 10))
+
+
+
+t<- df %>%
+  group_by(trait) %>%
+  summarise(
+    n = n(),
+    n_species = n_distinct(species),
+    mean = mean(trait_value, na.rm = TRUE),
+    sd = sd(trait_value, na.rm = TRUE),
+    min = min(trait_value, na.rm = TRUE),
+    max = max(trait_value, na.rm = TRUE),
+    median = median(trait_value, na.rm = TRUE)
+  ) %>%
+  arrange(trait)
+
+
+df <-unique(df)
+unique(df$trait)
+
+saveRDS(df,"L:/TraitDataNewVersion.rds")
+
+#write.csv(df,"L:/TraitData.csv")
+#write.csv(t,"L:/TraitDataStats.csv")
