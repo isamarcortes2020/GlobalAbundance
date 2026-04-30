@@ -1,70 +1,107 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Apr 21 12:17:48 2026
-
-@author: cenv1124
+Spatial cross-validation pipeline (grid-based blocking)
 """
 
-
 import numpy as np
-import matplotlib.pyplot as plt
-from geotessera import GeoTessera
-import json
 import pandas as pd
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import GroupKFold, cross_validate
 
-
-
+# -----------------------------
+# Load data
+# -----------------------------
 Amax = pd.read_csv("R:/GlobalDataset/TraitsCombinedWithGeoTessera/Amax.csv")
 
-df = Amax.dropna(subset=["0"])
+# Drop missing embeddings (SAFE copy to avoid warning)
+df = Amax.dropna(subset=["0"]).copy()
+
+# -----------------------------
+# Features and target
+# -----------------------------
 embeddings_only = df.loc[:, "0":]
 
-
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.model_selection import train_test_split
-
-# Define features (columns 0-127 from TESSERA) and target trait
 X = embeddings_only
-y = df['Amax']
+y = df["Amax"]
 
-# Split for validation
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.3, random_state=42
+# -----------------------------
+# ⚠️ REQUIREMENT: coordinates
+# -----------------------------
+# Change these if your column names differ
+lat_col = "Coords_y"
+lon_col = "Coords_x"
+
+# -----------------------------
+# Grid-based spatial blocking
+# -----------------------------
+grid_size = 5.0  # degrees (try 1–5 depending on dataset)
+
+df["lat_bin"] = (df[lat_col] // grid_size)
+df["lon_bin"] = (df[lon_col] // grid_size)
+
+df["spatial_block"] = (
+    df["lat_bin"].astype(str) + "_" + df["lon_bin"].astype(str)
 )
 
+groups = df["spatial_block"]
+
+# Check block sizes
+print("\nSpatial block sizes (top 10):")
+print(df["spatial_block"].value_counts().head(10))
+
+print("\nTotal number of spatial blocks:", df["spatial_block"].nunique())
+
+# -----------------------------
+# Model
+# -----------------------------
 model = RandomForestRegressor(
     n_estimators=800,
-    max_depth=None,              # remove depth cap
+    max_depth=None,
     min_samples_split=2,
     min_samples_leaf=1,
     max_features="sqrt",
     random_state=42,
     n_jobs=-1
 )
-model.fit(X_train, y_train)
 
-y_pred = model.predict(X_test)
+# -----------------------------
+# Spatial cross-validation
+# -----------------------------
+n_splits = 5  # reduce to 3 if needed
 
-from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
-import numpy as np
+gkf = GroupKFold(n_splits=n_splits)
 
-r2 = r2_score(y_test, y_pred)
-rmse = np.sqrt(mean_squared_error(y_test, y_pred))
-mae = mean_absolute_error(y_test, y_pred)
+scores = cross_validate(
+    model,
+    X,
+    y,
+    cv=gkf,
+    groups=groups,
+    scoring={
+        "r2": "r2",
+        "rmse": "neg_root_mean_squared_error",
+        "mae": "neg_mean_absolute_error"
+    },
+    n_jobs=-1,
+    return_train_score=False
+)
 
-print("R2:", r2)
-print("RMSE:", rmse)
-print("MAE:", mae)
+# -----------------------------
+# Results
+# -----------------------------
+r2_scores = scores["test_r2"]
+rmse_scores = -scores["test_rmse"]
+mae_scores = -scores["test_mae"]
 
-
-from sklearn.model_selection import cross_val_score, KFold
-
-cv = KFold(n_splits=5, shuffle=True, random_state=42)
-
-r2_scores = cross_val_score(model, X, y, cv=cv, scoring="r2")
-
-print("R2 scores:", r2_scores)
+print("\n===== Spatial Cross-Validation Results =====")
+print("R2 per fold:", r2_scores)
 print("Mean R2:", r2_scores.mean())
+print("Std R2:", r2_scores.std())
 
+print("\nRMSE per fold:", rmse_scores)
+print("Mean RMSE:", rmse_scores.mean())
+
+print("\nMAE per fold:", mae_scores)
+print("Mean MAE:", mae_scores.mean())
 
 
