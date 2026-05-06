@@ -60,50 +60,78 @@ AddData <- function(file, cec, clay, sand, pH){
 
 
 
-Amax <- read.csv("R:/GlobalDataset/TraitsCombinedWithGeoTessera/Amax.csv",check.names = FALSE)
+Amax <- read.csv("R:/GlobalDataset/TraitsCombinedWithGeoTessera/2017_Onwards/Amax2017_Present.csv",check.names = FALSE)
 Amax <- AddData(Amax,cec_avg,clay_avg,sand_avg,pH_avg)
-write.csv(Amax, "R:/GlobalDataset/TraitsCombinedWithGeoTessera/Amax.csv", row.names = FALSE)
+write.csv(Amax, "R:/GlobalDataset/TraitsCombinedWithGeoTessera/2017_Onwards/Amax2017_Present.csv", row.names = FALSE)
 
-Asat <- read.csv("R:/GlobalDataset/TraitsCombinedWithGeoTessera/Asat.csv",check.names = FALSE)
+Asat <- read.csv("R:/GlobalDataset/TraitsCombinedWithGeoTessera/2017_Onwards/Asat2017_Present.csv",check.names = FALSE)
 Asat <- AddData(Asat,cec_avg,clay_avg,sand_avg,pH_avg)
-write.csv(Asat, "R:/GlobalDataset/TraitsCombinedWithGeoTessera/Asat.csv", row.names = FALSE)
+write.csv(Asat, "R:/GlobalDataset/TraitsCombinedWithGeoTessera/2017_Onwards/Asat2017_Present.csv", row.names = FALSE)
 
-BranchHydraulic <- read.csv("R:/GlobalDataset/TraitsCombinedWithGeoTessera/BranchHydraulic.csv",check.names = FALSE)
-BranchHydraulic <- AddData(BranchHydraulic,cec_avg,clay_avg,sand_avg,pH_avg)
-write.csv(BranchHydraulic, "R:/GlobalDataset/TraitsCombinedWithGeoTessera/BranchHydraulic.csv", row.names = FALSE)
 
-FruitLength <- read.csv("R:/GlobalDataset/TraitsCombinedWithGeoTessera/FruitLength.csv",check.names = FALSE)
-FruitLength <- AddData(FruitLength,cec_avg,clay_avg,sand_avg,pH_avg)
-write.csv(FruitLength, "R:/GlobalDataset/TraitsCombinedWithGeoTessera/FruitLength.csv", row.names = FALSE)
+BranchHydraulic2017_Present <- read.csv("R:/GlobalDataset/TraitsCombinedWithGeoTessera/2017_Onwards/BranchHydraulic2017_Present.csv",check.names = FALSE)
+BranchHydraulic2017_Present <- AddData(BranchHydraulic2017_Present,cec_avg,clay_avg,sand_avg,pH_avg)
+write.csv(BranchHydraulic2017_Present, "R:/GlobalDataset/TraitsCombinedWithGeoTessera/2017_Onwards/BranchHydraulic2017_Present.csv", row.names = FALSE)
 
-LeafCaContent <- read.csv("R:/GlobalDataset/TraitsCombinedWithGeoTessera/LeafCaContent.csv",check.names = FALSE)
-LeafCaContent <- AddData(LeafCaContent,cec_avg,clay_avg,sand_avg,pH_avg)
-write.csv(LeafCaContent, "R:/GlobalDataset/TraitsCombinedWithGeoTessera/LeafCaContent.csv", row.names = FALSE)
 
-LeafCContent <- read.csv("R:/GlobalDataset/TraitsCombinedWithGeoTessera/LeafCContent.csv",check.names = FALSE)
-LeafCContent <- AddData(LeafCContent,cec_avg,clay_avg,sand_avg,pH_avg)
-write.csv(LeafCContent, "R:/GlobalDataset/TraitsCombinedWithGeoTessera/LeafCContent.csv", row.names = FALSE)
+FruitLength2017_Present <- read.csv("R:/GlobalDataset/TraitsCombinedWithGeoTessera/2017_Onwards/FruitLength2017_Present.csv",check.names = FALSE)
+FruitLength2017_Present <- AddData(FruitLength2017_Present,cec_avg,clay_avg,sand_avg,pH_avg)
+write.csv(FruitLength2017_Present, "R:/GlobalDataset/TraitsCombinedWithGeoTessera/2017_Onwards/FruitLength2017_Present.csv", row.names = FALSE)
 
-LeafCaContent <- read.csv("R:/GlobalDataset/TraitsCombinedWithGeoTessera/LeafCaContent.csv",check.names = FALSE)
-LeafCaContent <- AddData(LeafCaContent,cec_avg,clay_avg,sand_avg,pH_avg)
-write.csv(LeafCaContent, "R:/GlobalDataset/TraitsCombinedWithGeoTessera/LeafCaContent.csv", row.names = FALSE)
 
-LeafFreshMass <- read.csv("R:/GlobalDataset/TraitsCombinedWithGeoTessera/LeafFreshMass.csv",check.names = FALSE)
-LeafFreshMass <- AddData(LeafFreshMass,cec_avg,clay_avg,sand_avg,pH_avg)
-write.csv(LeafFreshMass, "R:/GlobalDataset/TraitsCombinedWithGeoTessera/LeafFreshMass.csv", row.names = FALSE)
+LeafCaContent2017_Present <- read.csv("R:/GlobalDataset/TraitsCombinedWithGeoTessera/2017_Onwards/LeafCaContent2017_Present.csv",check.names = FALSE)
+LeafCaContent2017_Present <- AddData(LeafCaContent2017_Present,cec_avg,clay_avg,sand_avg,pH_avg)
+write.csv(LeafCaContent2017_Present, "R:/GlobalDataset/TraitsCombinedWithGeoTessera/2017_Onwards/LeafCaContent2017_Present.csv", row.names = FALSE)
 
-LeafMgContent <- read.csv("R:/GlobalDataset/TraitsCombinedWithGeoTessera/LeafMgContent.csv",check.names = FALSE)
-LeafMgContent <- AddData(LeafMgContent,cec_avg,clay_avg,sand_avg,pH_avg)
-write.csv(LeafMgContent, "R:/GlobalDataset/TraitsCombinedWithGeoTessera/LeafMgContent.csv", row.names = FALSE)
 
-StemDryMass <- read.csv("R:/GlobalDataset/TraitsCombinedWithGeoTessera/StemDryMass.csv",check.names = FALSE)
-StemDryMass <- AddData(StemDryMass,cec_avg,clay_avg,sand_avg,pH_avg)
-write.csv(StemDryMass, "R:/GlobalDataset/TraitsCombinedWithGeoTessera/StemDryMass.csv", row.names = FALSE)
+LeafCContent2017_Present <- read.csv("R:/GlobalDataset/TraitsCombinedWithGeoTessera/UpdatedDatasetSoFar/LeafCContent.csv",check.names = FALSE)
+LeafCContent2017_Present <- AddData(LeafCContent2017_Present,cec_avg,clay_avg,sand_avg,pH_avg)
+write.csv(LeafCContent2017_Present, "R:/GlobalDataset/TraitsCombinedWithGeoTessera/2017_Onwards/LeafCContent2017_Present.csv", row.names = FALSE)
 
-VesselLumen <- read.csv("R:/GlobalDataset/TraitsCombinedWithGeoTessera/VesselLumen.csv",check.names = FALSE)
-VesselLumen <- AddData(VesselLumen,cec_avg,clay_avg,sand_avg,pH_avg)
-write.csv(VesselLumen, "R:/GlobalDataset/TraitsCombinedWithGeoTessera/VesselLumen.csv", row.names = FALSE)
 
-LeafHydraulic <- read.csv("R:/GlobalDataset/TraitsCombinedWithGeoTessera/LeafHydraulic.csv",check.names = FALSE)
-LeafHydraulic <- AddData(LeafHydraulic,cec_avg,clay_avg,sand_avg,pH_avg)
-write.csv(LeafHydraulic, "R:/GlobalDataset/TraitsCombinedWithGeoTessera/LeafHydraulic.csv", row.names = FALSE)
+LeafFreshMass2017_Present <- read.csv("R:/GlobalDataset/TraitsCombinedWithGeoTessera/2017_Onwards/LeafFreshMass2017_Present.csv",check.names = FALSE)
+LeafFreshMass2017_Present <- AddData(LeafFreshMass2017_Present,cec_avg,clay_avg,sand_avg,pH_avg)
+write.csv(LeafFreshMass2017_Present, "R:/GlobalDataset/TraitsCombinedWithGeoTessera/2017_Onwards/LeafFreshMass2017_Present.csv", row.names = FALSE)
+
+
+LeafHydraulic2017_Present <- read.csv("R:/GlobalDataset/TraitsCombinedWithGeoTessera/2017_Onwards/LeafHydraulic2017_Present.csv",check.names = FALSE)
+LeafHydraulic2017_Present <- AddData(LeafHydraulic2017_Present,cec_avg,clay_avg,sand_avg,pH_avg)
+write.csv(LeafHydraulic2017_Present, "R:/GlobalDataset/TraitsCombinedWithGeoTessera/2017_Onwards/LeafHydraulic2017_Present.csv", row.names = FALSE)
+
+
+LeafKContent2017_Present <- read.csv("R:/GlobalDataset/TraitsCombinedWithGeoTessera/2017_Onwards/LeafKContent2017_Present.csv",check.names = FALSE)
+LeafKContent2017_Present <- AddData(LeafKContent2017_Present,cec_avg,clay_avg,sand_avg,pH_avg)
+write.csv(LeafKContent2017_Present, "R:/GlobalDataset/TraitsCombinedWithGeoTessera/2017_Onwards/LeafKContent2017_Present.csv", row.names = FALSE)
+
+
+LeafMgContent2017_Present <- read.csv("R:/GlobalDataset/TraitsCombinedWithGeoTessera/2017_Onwards/LeafMgContent2017_Present.csv",check.names = FALSE)
+LeafMgContent2017_Present <- AddData(LeafMgContent2017_Present,cec_avg,clay_avg,sand_avg,pH_avg)
+write.csv(LeafMgContent2017_Present, "R:/GlobalDataset/TraitsCombinedWithGeoTessera/2017_Onwards/LeafMgContent2017_Present.csv", row.names = FALSE)
+
+
+LeafPContent2017_Present <- read.csv("R:/GlobalDataset/TraitsCombinedWithGeoTessera/2017_Onwards/LeafPContent2017_Present.csv",check.names = FALSE)
+LeafPContent2017_Present <- AddData(LeafPContent2017_Present,cec_avg,clay_avg,sand_avg,pH_avg)
+write.csv(LeafPContent2017_Present, "R:/GlobalDataset/TraitsCombinedWithGeoTessera/2017_Onwards/LeafPContent2017_Present.csv", row.names = FALSE)
+
+
+LeafWaterContent2017_Present <- read.csv("R:/GlobalDataset/TraitsCombinedWithGeoTessera/2017_Onwards/LeafWaterContent2017_Present.csv",check.names = FALSE)
+LeafWaterContent2017_Present <- AddData(LeafWaterContent2017_Present,cec_avg,clay_avg,sand_avg,pH_avg)
+write.csv(LeafWaterContent2017_Present, "R:/GlobalDataset/TraitsCombinedWithGeoTessera/2017_Onwards/LeafWaterContent2017_Present.csv", row.names = FALSE)
+
+
+RootDryMass2017_Present <- read.csv("R:/GlobalDataset/TraitsCombinedWithGeoTessera/2017_Onwards/RootDryMass2017_Present.csv",check.names = FALSE)
+RootDryMass2017_Present <- AddData(RootDryMass2017_Present,cec_avg,clay_avg,sand_avg,pH_avg)
+write.csv(RootDryMass2017_Present, "R:/GlobalDataset/TraitsCombinedWithGeoTessera/2017_Onwards/RootDryMass2017_Present.csv", row.names = FALSE)
+
+
+SeedLength2017_Present <- read.csv("R:/GlobalDataset/TraitsCombinedWithGeoTessera/2017_Onwards/SeedLength2017_Present.csv",check.names = FALSE)
+SeedLength2017_Present <- AddData(SeedLength2017_Present,cec_avg,clay_avg,sand_avg,pH_avg)
+write.csv(SeedLength2017_Present, "R:/GlobalDataset/TraitsCombinedWithGeoTessera/2017_Onwards/SeedLength2017_Present.csv", row.names = FALSE)
+
+
+StemDryMass2017_Present <- read.csv("R:/GlobalDataset/TraitsCombinedWithGeoTessera/2017_Onwards/StemDryMass2017_Present.csv",check.names = FALSE)
+StemDryMass2017_Present <- AddData(StemDryMass2017_Present,cec_avg,clay_avg,sand_avg,pH_avg)
+write.csv(StemDryMass2017_Present, "R:/GlobalDataset/TraitsCombinedWithGeoTessera/2017_Onwards/StemDryMass2017_Present.csv", row.names = FALSE)
+
+
+
