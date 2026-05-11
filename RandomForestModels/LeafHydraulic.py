@@ -5,9 +5,12 @@ Spatial cross-validation + GeoTessera prediction + yearly mosaics
 
 import numpy as np
 import pandas as pd
-
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import GroupKFold, cross_validate
+import os
+import glob
+
+# -----------------------------
 
 # -----------------------------
 # Load data
@@ -29,7 +32,9 @@ soil_cols = [
     "pH",
     "slope",
     "mcwd",
-    "tmax_mean"
+    "tmax_mean",
+    "Coords_x",
+    "Coords_y"
 ]
 
 # GeoTessera embedding columns
@@ -37,6 +42,7 @@ geo_cols = [c for c in df.columns if c.isdigit()]
 
 
 # remove low-variance dimensions
+'''
 geo_cols = [
     c for c in geo_cols
     if df[c].std() > 0.01
@@ -58,7 +64,7 @@ geo_cols = (
     .index
     .tolist()
 )
-
+'''
 print("\nTop GeoTessera dimensions:")
 print(geo_cols)
 
@@ -92,7 +98,7 @@ y = df["Leaf hydraulic conductance mmol m-2 s-1 MPa-1"]
 # -----------------------------
 lat_col = "Coords_y"
 lon_col = "Coords_x"
-
+year_col = "Year"
 # ~50 km blocks
 grid_size = 0.5
 
@@ -182,19 +188,120 @@ print("\nTraining final model...")
 
 model.fit(X, y)
 
-# -----------------------------
-# Feature importance
-# -----------------------------
-importance = pd.DataFrame({
-    "feature": X.columns,
-    "importance": model.feature_importances_
-})
 
-importance = importance.sort_values(
-    "importance",
-    ascending=False
+print("\nDone ✅")
+
+import os
+import numpy as np
+import rasterio
+from affine import Affine
+from geotessera import GeoTessera
+
+# -----------------------------
+# setup
+# -----------------------------
+gt = GeoTessera()
+out_dir = "R:/GlobalDataset/GeoTesseraOutputs/LeafHydraulic_100m"
+os.makedirs(out_dir, exist_ok=True)
+
+chunk_size = 50000  # prevents memory spikes
+
+# df must contain: lon_col, lat_col, year_col
+coords = df[[lon_col, lat_col, year_col]].drop_duplicates().reset_index(drop=True)
+
+coords[year_col] = coords[year_col].replace(
+    {y: 2017 for y in range(2010, 2017)}
 )
 
 
+# -----------------------------
+# loop over space-time points
+# -----------------------------
+for row in coords.itertuples(index=False):
 
-print("\nDone ✅")
+    lon = float(getattr(row, lon_col))
+    lat = float(getattr(row, lat_col))
+    year = int(getattr(row, year_col))
+
+    out_path = os.path.join(
+        out_dir,
+        f"trait_{lat:.3f}_{lon:.3f}_{year}.tif"
+    )
+
+    if os.path.exists(out_path):
+        continue
+
+    try:
+        # -----------------------------
+        # 1. fetch tessera embedding
+        # -----------------------------
+        tile_data, crs, transform = gt.fetch_embedding(
+            lon=lon,
+            lat=lat,
+            year=year
+        )
+
+        h, w, c = tile_data.shape
+
+        # -----------------------------
+        # 2. flatten embedding
+        # -----------------------------
+        geo_pixels = tile_data.reshape(-1, c)
+
+        # -----------------------------
+        # 3. get soil for this location
+        # (safe nearest-match approach)
+        # -----------------------------
+        idx = ((df[lon_col] - lon)**2 + (df[lat_col] - lat)**2).idxmin()
+
+        soil_values = df.loc[idx, soil_cols].values.astype(float)
+
+        soil_pixels = np.tile(
+            soil_values,
+            (geo_pixels.shape[0], 1)
+        )
+
+        # -----------------------------
+        # 4. combine features (CRITICAL)
+        # -----------------------------
+        pixels = np.hstack([geo_pixels, soil_pixels])
+
+        # -----------------------------
+        # 5. predict in chunks
+        # -----------------------------
+        preds = []
+
+        for i in range(0, len(pixels), chunk_size):
+            chunk = pixels[i:i + chunk_size]
+            preds.append(model.predict(chunk))
+
+        preds = np.concatenate(preds)
+
+        # -----------------------------
+        # 6. reshape back to raster
+        # -----------------------------
+        trait_map = preds.reshape(h, w).astype(np.float32)
+
+        # -----------------------------
+        # 7. save GeoTIFF
+        # -----------------------------
+        with rasterio.open(
+            out_path,
+            "w",
+            driver="GTiff",
+            height=h,
+            width=w,
+            count=1,
+            dtype="float32",
+            crs=crs,
+            transform=transform,
+        ) as dst:
+            dst.write(trait_map, 1)
+
+        print(f"Saved {out_path}")
+
+    except Exception as e:
+        print(f"Failed at {lat}, {lon}, {year}: {e}")
+        
+
+
